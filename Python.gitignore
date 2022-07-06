@@ -1,9 +1,9 @@
 # Thanks to astrojuanlu for this gitignore
 
 # Byte-compiled / optimized / DLL files
+*__pycache__*
 __pycache__/
 *.py[cod]
-*.py[co]
 *$py.class
 
 # C extensions
