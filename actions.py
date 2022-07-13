@@ -19,7 +19,7 @@ class Action:
         raise NotImplementedError()
 
 class EscapeAction(Action):
-    def Perform(self, engine: Engine, entity: Entity) -> None:
+    def perform(self, engine: Engine, entity: Entity) -> None:
         raise SystemExit()
 
 class MovementAction(Action):
