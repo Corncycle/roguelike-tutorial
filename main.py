@@ -8,11 +8,11 @@ from engine import Engine
 from procgen import generate_dungeon
 
 def main() -> None:
-    screen_width = 80
-    screen_height = 50
+    screen_width = 70
+    screen_height = 38
 
-    map_width = 80
-    map_height = 45
+    map_width = 70
+    map_height = 38
 
     room_max_size = 10
     room_min_size = 6
@@ -21,7 +21,7 @@ def main() -> None:
     max_monsters_per_room = 2
 
     tileset = tcod.tileset.load_tilesheet(
-        "roguelike_tileset.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+        "roguelike_tileset_2x.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
 
     player = copy.deepcopy(entity_factories.player)
@@ -39,9 +39,9 @@ def main() -> None:
     )
     engine.update_fov()
 
-    with tcod.context.new_terminal(
-        screen_width,
-        screen_height,
+    with tcod.context.new(
+        columns = screen_width,
+        rows = screen_height,
         tileset = tileset,
         title = "Yet Another Roguelike Tutorial",
         vsync = True,
