@@ -2,17 +2,18 @@ import copy
 
 import tcod
 
+import color
 import entity_factories
 
 from engine import Engine
 from procgen import generate_dungeon
 
 def main() -> None:
-    screen_width = 70
-    screen_height = 38
+    screen_width = 80
+    screen_height = 50
 
-    map_width = 70
-    map_height = 38
+    map_width = 80
+    map_height = 43
 
     room_max_size = 10
     room_min_size = 6
@@ -21,7 +22,7 @@ def main() -> None:
     max_monsters_per_room = 2
 
     tileset = tcod.tileset.load_tilesheet(
-        "roguelike_tileset_2x.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+        "roguelike_tileset.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
 
     player = copy.deepcopy(entity_factories.player)
@@ -39,6 +40,10 @@ def main() -> None:
     )
     engine.update_fov()
 
+    engine.message_log.add_message(
+        "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
+    )
+
     with tcod.context.new(
         columns = screen_width,
         rows = screen_height,
@@ -48,9 +53,11 @@ def main() -> None:
     ) as context:
         root_console = tcod.Console(screen_width, screen_height, order="F")
         while True:
-            engine.render(console = root_console, context = context)
-            
-            engine.event_handler.handle_events()
+            root_console.clear()
+            engine.event_handler.on_render(console = root_console)
+            context.present(root_console)
+
+            engine.event_handler.handle_events(context)
 
 
 if __name__ == "__main__":
