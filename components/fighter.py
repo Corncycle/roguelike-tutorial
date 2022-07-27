@@ -38,11 +38,11 @@ class Fighter(BaseComponent):
             death_message = f"The {self.parent.name} is killed!"
             death_message_color = color.enemy_die
 
-        self.entity.char = "%"
-        self.entity.color = (191, 0, 0)
-        self.entity.blocks_movement = False
-        self.entity.ai = None
-        self.entity.name = f"remains of {self.entity.name}"
-        self.entity.render_order = RenderOrder.CORPSE
+        self.parent.char = "%"
+        self.parent.color = (191, 0, 0)
+        self.parent.blocks_movement = False
+        self.parent.ai = None
+        self.parent.name = f"remains of {self.parent.name}"
+        self.parent.render_order = RenderOrder.CORPSE
 
         self.engine.message_log.add_message(death_message, death_message_color)
