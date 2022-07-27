@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from entity import Actor
 
 class Fighter(BaseComponent):
-    entity: Actor
+    parent: Actor
 
     def __init__(self, hp: int, defense: int, power: int):
         self.max_hp = hp
@@ -26,16 +26,16 @@ class Fighter(BaseComponent):
     @hp.setter
     def hp(self, value: int) -> None:
         self._hp = max(0, min(value, self.max_hp))
-        if self._hp == 0 and self.entity.ai:
+        if self._hp == 0 and self.parent.ai:
             self.die()
 
     def die(self) -> None:
-        if self.engine.player is self.entity:
+        if self.engine.player is self.parent:
             death_message = "You died!"
             death_message_color = color.player_die
             self.engine.event_handler = GameOverEventHandler(self.engine)
         else:
-            death_message = f"The {self.entity.name} is killed!"
+            death_message = f"The {self.parent.name} is killed!"
             death_message_color = color.enemy_die
 
         self.entity.char = "%"
