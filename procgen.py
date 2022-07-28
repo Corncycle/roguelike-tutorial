@@ -12,6 +12,18 @@ import tile_types
 if TYPE_CHECKING:
     from engine import Engine
 
+item_weights = {
+    entity_factories.health_potion: 20,
+    entity_factories.confusion_scroll: 5,
+    entity_factories.lightning_scroll: 5,
+    entity_factories.fireball_scroll: 100,
+}
+
+total_item_weight = sum(item_weights.values())
+item_probs = { item : (weight / total_item_weight) for (item, weight) in item_weights.items() }
+print("Item spawn chances:")
+[print(f"{item.name}: {round(100 * prob, 2)}%") for item, prob in item_probs.items()]
+
 class RectangularRoom:
     def __init__(self, x: int, y: int, width: int, height: int):
         self.x1 = x
@@ -59,8 +71,20 @@ def place_entities(
     for i in range(number_of_items):
         x = random.randint(room.x1 + 1, room.x2 - 1)
         y = random.randint(room.y1 + 1, room.y2 - 1)
+
         if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
-            entity_factories.health_potion.spawn(dungeon, x, y)
+            item_chance = random.random()
+
+            running_chance = 0
+            error_checking = True
+            for item, prob in item_probs.items():
+                running_chance += prob
+                if running_chance >= item_chance:
+                    item.spawn(dungeon, x, y)
+                    error_checking = False
+                    break
+            if (error_checking):
+                print("Hopefully this never prints!")
 
 def tunnel_between(
     start: Tuple[int, int], end: Tuple[int, int]
