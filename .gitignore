@@ -1,5 +1,8 @@
 # Thanks to astrojuanlu for this gitignore
 
+# save files
+*.sav
+
 # Workspace file
 *.code-workspace
 
