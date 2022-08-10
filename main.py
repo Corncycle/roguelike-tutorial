@@ -18,7 +18,7 @@ def main() -> None:
     screen_height = 50
 
     tileset = tcod.tileset.load_tilesheet(
-        "roguelike_tileset.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+        "rockwell_tileset.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
 
     handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
