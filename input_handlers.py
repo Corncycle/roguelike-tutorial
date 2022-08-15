@@ -7,6 +7,7 @@ from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
 import tcod.event
 
 import actions
+
 from actions import (
     Action, 
     BumpAction,
@@ -16,6 +17,7 @@ from actions import (
 
 import color
 import exceptions
+
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -95,6 +97,54 @@ class PopupMessage(BaseEventHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[BaseEventHandler]:
         """Any key returns to the parent handler."""
         return self.parent
+
+class PopupYesNo(BaseEventHandler):
+    def __init__(self, parent_handler: BaseEventHandler, text: str, yes_callback: Callable, no_callback: Callable):
+        self.parent = parent_handler
+        self.text = text
+        self.yes_callback = yes_callback
+        self.no_callback = no_callback
+
+    def on_render(self, console: tcod.Console) -> None:
+        """Render the parent and dim the result, print the message along with options."""
+        self.parent.on_render(console)
+        console.tiles_rgb["fg"] //= 8
+        console.tiles_rgb["bg"] //= 8
+
+        console.print(
+            console.width // 2,
+            console.height // 2,
+            self.text,
+            fg = color.white,
+            bg = color.black,
+            alignment = tcod.CENTER
+        )
+
+        console.print(
+            console.width // 2 - 5,
+            console.height // 2 + 2,
+            "[y] Yes",
+            fg = color.white,
+            bg = color.black,
+            alignment = tcod.CENTER
+        )
+
+        console.print(
+            console.width // 2 + 5,
+            console.height // 2 + 2,
+            "[n] No",
+            fg = color.white,
+            bg = color.black,
+            alignment = tcod.CENTER
+        )
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[BaseEventHandler]:
+        key = event.sym
+
+        if key == tcod.event.K_y:
+            return self.yes_callback()
+        elif key == tcod.event.K_n:
+            return self.no_callback()
 
 class EventHandler(BaseEventHandler):
     def __init__(self, engine: Engine):

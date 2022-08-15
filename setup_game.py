@@ -14,7 +14,7 @@ from engine import Engine
 import entity_factories
 from game_map import GameWorld
 import input_handlers
-
+from os.path import exists
 
 # Load the background image and remove the alpha channel
 background_image = tcod.image.load("menu_background.png")[:, :, :3]
@@ -68,6 +68,9 @@ def load_game(filename: str) -> Engine:
     assert isinstance(engine, Engine)
     return engine
 
+def save_exists() -> bool:
+    return exists("savegame.sav")
+
 class MainMenu(input_handlers.BaseEventHandler):
     """Handle the main menu rendering and input."""
 
@@ -118,4 +121,12 @@ class MainMenu(input_handlers.BaseEventHandler):
                 traceback.print_exc() # Print to stderr
                 return input_handlers.PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.K_n:
-            return input_handlers.MainGameEventHandler(new_game())
+            if save_exists():
+                yes_callback = lambda : input_handlers.MainGameEventHandler(new_game())
+                no_callback = lambda : self
+                return input_handlers.PopupYesNo(self, 
+                    "A save file already exists. Begin a new run anyway?", 
+                    yes_callback, 
+                    no_callback)
+            else:
+                return input_handlers.MainGameEventHandler(new_game())
