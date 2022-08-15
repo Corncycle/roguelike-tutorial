@@ -187,20 +187,10 @@ def generate_dungeon(
 
         place_entities(new_room, dungeon, engine.game_world.current_floor)
 
-        dungeon.tiles[center_of_last_room] = tile_types.down_stairs
-        dungeon.downstairs_location = center_of_last_room # MOVING THIS
-
         # Finally append the new room to the list
         rooms.append(new_room)
 
-    '''dungeon.tiles[center_of_last_room] = tile_types.down_stairs
-    dungeon.downstairs_location = center_of_last_room'''
-
-    # DEBUG ONLY
-    # DEBUG ONLY: BUILDS A TUNNEL ON THE LEFT WALL AND IN MIDDLE OF MAP
-    for x, y in tunnel_between((1, 1), (70, 25)):
-        dungeon.tiles[x, y] = tile_types.floor
-    # DEBUG ONLY
-    # DEBUG ONLY
+    dungeon.tiles[center_of_last_room] = tile_types.down_stairs
+    dungeon.downstairs_location = center_of_last_room
 
     return dungeon
