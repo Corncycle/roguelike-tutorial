@@ -200,10 +200,14 @@ class MainGameEventHandler(EventHandler):
 
         player = self.engine.player
 
-        if key == tcod.event.K_PERIOD and modifier & (
+        if (key == tcod.event.K_PERIOD) and modifier & (
             tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
         ):
-            return actions.TakeStairsAction(player)
+            return actions.TakeStairsAction(player, True)
+        elif (key == tcod.event.K_COMMA) and modifier & (
+            tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
+        ):
+            return actions.TakeStairsAction(player, False)
 
         if key in MOVE_KEYS:
             dx, dy = MOVE_KEYS[key]

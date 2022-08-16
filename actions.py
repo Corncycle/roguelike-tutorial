@@ -104,17 +104,41 @@ class WaitAction(Action):
         pass
 
 class TakeStairsAction(Action):
+    def __init__(self, entity: Actor, downward: bool):
+        super().__init__(entity)
+        self.downward = downward
+
     def perform(self) -> None:
         """
         Take the stiars, if any exist at the entity's location.
         """
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
-            self.engine.game_world.generate_floor()
-            self.engine.message_log.add_message(
-                "You descend the staircase.", color.descend
-            )
-        else:
-            raise exceptions.Impossible("There are no stairs here.")
+            if self.downward:
+                if self.engine.game_world.next_floor_exists():
+                    self.engine.game_world.descend_floor()
+                else:
+                    self.engine.game_world.generate_floor()
+                self.engine.message_log.add_message(
+                    "You descend the staircase.", color.descend
+                )
+            else:
+                # TODO : implement an input "lockout" so this message does not appear when going up a staircase
+                # then appearing on the down staircase on the previous floor
+                raise exceptions.Impossible("You cannot go up this staircase.")
+
+        if (self.entity.x, self.entity.y) == self.engine.game_map.upstairs_location:
+            if self.downward:
+                # TODO : implement an input "lockout" so this message does not appear when going down a staircase
+                # then appearing on the up staircase on the next floor
+                pass # raise exceptions.Impossible("You cannot go down this staircase.")
+            else:
+                if self.engine.game_world.current_floor_number == 1:
+                    raise exceptions.Impossible("You have not finished your mission. You may not leave.")
+                else:
+                    self.engine.game_world.ascend_floor()
+                    self.engine.message_log.add_message(
+                        "You ascend the staircase.", color.descend
+                    )
 
 class ActionWithDirection(Action):
     def __init__(self, entity: Entity, dx: int, dy: int):

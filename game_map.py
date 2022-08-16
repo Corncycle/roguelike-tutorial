@@ -1,5 +1,4 @@
 from __future__ import annotations
-from html.entities import entitydefs
 
 from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 
@@ -29,6 +28,7 @@ class GameMap:
         ) # Tiles the player has seen
 
         self.downstairs_location = (0, 0)
+        self.upstairs_location = (0, 0)
 
     @property
     def gamemap(self) -> GameMap:
@@ -107,7 +107,7 @@ class GameWorld:
         max_rooms: int,
         room_min_size: int,
         room_max_size: int,
-        current_floor: int = 0,
+        current_floor_number: int = 0,
     ):
         self.engine = engine
 
@@ -119,18 +119,33 @@ class GameWorld:
         self.room_min_size = room_min_size
         self.room_max_size = room_max_size
 
-        self.current_floor = current_floor
+        self.current_floor_number = current_floor_number
+        self.game_maps = []
 
-    def generate_floor(self) -> None:
+    def descend_floor(self, step: int = 1) -> None:
+        self.current_floor_number += step
+        self.engine.game_map = self.game_maps[self.current_floor_number - 1]
+        self.engine.player.place(*self.engine.game_map.upstairs_location, self.engine.game_map)
+
+    def ascend_floor(self, step: int = 1) -> None:
+        self.current_floor_number -= step
+        self.engine.game_map = self.game_maps[self.current_floor_number - 1]
+        self.engine.player.place(*self.engine.game_map.downstairs_location, self.engine.game_map)
+
+    def generate_floor(self, first_floor: bool = False) -> None:
         from procgen import generate_dungeon
 
-        self.current_floor += 1
-
-        self.engine.game_map = generate_dungeon(
+        self.current_floor_number += 1
+        self.game_maps.append(generate_dungeon(
             max_rooms = self.max_rooms,
             room_min_size = self.room_min_size,
             room_max_size = self.room_max_size,
             map_width = self.map_width,
             map_height = self.map_height,
             engine = self.engine,
-        )
+        ))
+        self.engine.game_map = self.game_maps[self.current_floor_number - 1]
+        self.engine.update_fov()
+
+    def next_floor_exists(self) -> bool:
+        return self.current_floor_number < len(self.game_maps)

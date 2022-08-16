@@ -40,7 +40,7 @@ def new_game() -> Engine:
         map_height = map_height,
     )
 
-    engine.game_world.generate_floor()
+    engine.game_world.generate_floor(first_floor = True)
     engine.update_fov()
 
     engine.message_log.add_message(
