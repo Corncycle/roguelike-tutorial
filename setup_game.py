@@ -81,7 +81,7 @@ class MainMenu(input_handlers.BaseEventHandler):
         console.print(
             console.width // 2,
             console.height // 2 - 4,
-            """TOMBS OF THE ANCIENT KINGS""",
+            """MAGE'S CURSE""",
             fg = color.menu_title,
             alignment = tcod.CENTER,
         )
@@ -95,7 +95,7 @@ class MainMenu(input_handlers.BaseEventHandler):
 
         menu_width = 24
         for i, text in enumerate(
-            ["[N] Play a new game", "[C] Continue last game", "[Q] Quit"]
+            ["[N] Play a new game", "[C] Continue last game", "[Q] Quit", "[H] Help / Controls"]
         ):
             console.print(
                 console.width // 2,
@@ -106,7 +106,7 @@ class MainMenu(input_handlers.BaseEventHandler):
                 alignment = tcod.CENTER,
                 bg_blend = tcod.BKGND_ALPHA(64),
             )
-        
+    
     def ev_keydown(
         self, event: tcod.event.KeyDown
     ) -> Optional[input_handlers.BaseEventHandler]:
@@ -130,3 +130,19 @@ class MainMenu(input_handlers.BaseEventHandler):
                     no_callback)
             else:
                 return input_handlers.MainGameEventHandler(new_game())
+        elif event.sym == tcod.event.K_h:
+            keyInfo = ["[Arrow Keys] - Movement",
+                "[NumPad] - Movement, allowing diagonals",
+                "[.] - Wait",
+                "[,] - Pick up item",
+                "[/] - Look far",
+                "[<] - Ascend staircase",
+                "[>] - Descend staircase",
+                "[d] - Drop item",
+                "[i] - Inventory",
+                "[c] - See character statistics",
+                "[v] - View past messages"]
+            helperMessage = ""
+            for s in keyInfo:
+                helperMessage = helperMessage + s + (" " * (40 - len(s))) + "\n"
+            return input_handlers.PopupMessage(self, "Controls for this game are similar to Nethack, though more limited\n\n" + helperMessage, 6)

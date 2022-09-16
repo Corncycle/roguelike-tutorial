@@ -75,9 +75,10 @@ class BaseEventHandler(tcod.event.EventDispatch[ActionOrHandler]):
 
 class PopupMessage(BaseEventHandler):
     """Display a popup text window."""
-    def __init__(self, parent_handler: BaseEventHandler, text: str):
+    def __init__(self, parent_handler: BaseEventHandler, text: str, yOffset: Optional[int] = 0):
         self.parent = parent_handler
         self.text = text
+        self.yOffset = yOffset
 
     def on_render(self, console: tcod.Console) -> None:
         """Render the parent and dim the result, then print the message on top."""
@@ -87,7 +88,7 @@ class PopupMessage(BaseEventHandler):
     
         console.print(
             console.width // 2,
-            console.height // 2,
+            (console.height // 2) - self.yOffset,
             self.text,
             fg = color.white,
             bg = color.black,
@@ -218,7 +219,7 @@ class MainGameEventHandler(EventHandler):
         elif key == tcod.event.K_ESCAPE:
             raise SystemExit() # Uncomment this for ESC to terminate
 
-        elif key == tcod.event.K_g:
+        elif key == tcod.event.K_g or key == tcod.event.K_COMMA:
             action = PickupAction(player)
 
         # Passing to other input handlers
